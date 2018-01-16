@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Spaceshit</title>
+		<link rel="stylesheet" href="style.css" />
+		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+	</head>
+	<body>
+		<header>
+			<h1>
+				<span>Spaceshit</span>
+				<small>A temporary language to generate data structures</small>
+			</h1>
+		</header>
+		<main>
+			<section id="wtf-is-spaceshit">
+				<div class="section-content">
+					<h2>WTF is Spaceshit?</h2>
+					<p>
+						Recently, I have had to generate a lot of <a href="https://en.wikipedia.org/wiki/JavaBeans">Java beans</a>, applying <a href="https://en.wikipedia.org/wiki/Java_Persistence_API">JPA</a> annotations on most of them. It is fair to say that this is a quite long and repetitive work to do, even using IDEs' getters &amp; setters and method generation tools...
+					</p>
+					<p>
+						Thus, I thought it would be great to be able to generate class skeletons from a language-agnostic description of the data structure they represent. A single-use piece of code would be parsed and a complete class would be generated from it.
+					</p>
+				</div>
+			</section>
+			<section id="syntax-elements">
+				<div class="sticky-block-container">
+					<div class="sticky-block">
+						<h2>Syntax elements</h2>
+						<pre><code lang="spaceshit"><span class="spaceshit-name">person</span> {
+  <span class="spaceshit-name">id</span>                   -- <span class="spaceshit-modifiers">positive</span>
+  <span class="spaceshit-name">name</span>                 -- <span class="spaceshit-modifiers">!empty</span>
+  <span class="spaceshit-name">birth date</span>  : <span class="spaceshit-type">calendar</span>
+  <span class="spaceshit-name">age</span>         : <span class="spaceshit-type">int</span>    -- <span class="spaceshit-modifiers">computed</span>
+  <span class="spaceshit-name">best friend</span> : <span class="spaceshit-type">person</span> -- <span class="spaceshit-modifiers">optional</span>
+  <span class="spaceshit-name">friends</span>     : <span class="spaceshit-type">list of person</span>
+} .<span class="spaceshit-target-lang">java</span> -- <span class="structure-modifiers">bean !check !tostring</span></code></pre>
+					</div>
+				</div>
+				<div class="scrolling-block">
+					<div data-highlight="spaceshit-type">
+						<h3>Types</h3>
+						<p>
+							The Spaceshit syntax supports generic types: use <code>... of ...</code> to stack a generic. Multiple generics (e.g.: <code>Map&lt;K, V&gt;</code>) are not supported.
+						</p>
+						<p>
+							Like names, words in multi-words types are separated with spaces in order to be completely language-agnostic.
+						</p>
+					</div>
+					<div data-highlight="spaceshit-name">
+						<h3>Names</h3>
+						<p>
+							Names are optional. If not explicitly specified, the name of a property will be inferred from the type. Generic types, such as <code>list of pet</code>, will be reversed to form the generated name of the property (e.g.: <code>pet list</code>).
+						</p>
+						<p>
+							In addition, Spaceshit defines some special types that will be converted to another type when used without a property name:
+						</p>
+						<ul>
+							<li><code>x</code>, <code>y</code> and <code>z</code> are mapped to <code>float</code>;</li>
+							<li><code>id</code> is mapped to <code>int</code>;</li>
+							<li><code>name</code> and <code>title</code> are mapped to <code>string</code>.</li>
+						</ul>
+						<p>
+							Like types, words in multi-words names are separated with spaces in order to be completely language-agnostic.
+						</p>
+					</div>
+					<div data-highlight="spaceshit-modifiers">
+						<h3>Modifiers</h3>
+						<p>
+							Modifiers are space-separated flags that give extra information about a property or a whole structure. A modifier is either unspecified, present, or negated when prefixed with an exclamation mark.
+						</p>
+						<p>
+							As they are parsed, but not handled by the parser, modifiers may have different effects depending on the code generator you use to generate actual code from a Spaceshit definition.
+						</p>
+					</div>
+					<div data-highlight="spaceshit-target-lang">
+						<h3>Target language</h3>
+						<p>
+							This gives the actual programming language to target when generating code.
+						</p>
+					</div>
+				</div>
+			</section>
+			<section id="idioms">
+				<div class="section-content">
+					<h2>Idioms</h2>
+					<p>
+						Here are some standards that should be respected when building a parser or a code generator in order to maintain a certain cohesion of the Spaceshit language.
+					</p>
+					<h3>The Spaceshit code is not meant to be saved</h3>
+					<p>
+						A Spaceshit structure definition is supposed to be a single-use code snippet, it should not be saved in a file and serve to generate code on a build-basis for instance.
+					</p>
+					<p>
+						Plus, if the technology changes, I want to be able to break retro-compatibility in order to change with it, and not be stuck nor forgotten...
+					</p>
+					<h3>The generated code is not meant to be final nor compilable</h3>
+					<p>
+						Keep in mind that the generated codes are class skeletons. As such, they may not be usable out of the box, and even require some tweaking before being compiled in some cases.
+					</p>
+					<h3>The generated code may not be perormed</h3>
+					<p>
+						... which should not be a problem as everyone reformat their code using the IDE, right?
+					</p>
+				</div>
+			</section>
+		</main>
+		<script src="app.js"></script>
+	</body>
+</html>

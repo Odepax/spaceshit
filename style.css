@@ -1,0 +1,114 @@
+/* Darky blue = #191423 */
+/* Lighty blue = #2c4478 */
+/* Classy blue = #3a3745 */
+/* Yellow = #ffd900 */
+
+* {
+	margin: 0;
+	padding: 0;
+	font-size: inherit;
+	font-family: inherit;
+	color: inherit;
+}
+
+body {
+	font-size: 13pt;
+	font-family: "Source Sans Pro", "Open Sans", "Arial", sans-serif;
+	color: white;
+}
+
+header {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 1;
+	height: 400pt;
+	background: url("spaceshit-logo.svg"), radial-gradient(at center bottom, #2c4478, #191423 80%);
+	background-repeat: no-repeat, no-repeat;
+	background-position: center, center;
+}
+header h1 {
+	margin-top: 260pt;
+	font-size: 1.8em;
+	font-weight: 300;
+	text-align: center;
+}
+header h1 small {
+	display: block;
+	font-size: .7em;
+}
+
+main {
+	position: relative;
+	margin-top: 400pt;
+	background: #3a3745;
+	z-index: 2;
+}
+
+section#wtf-is-spaceshit, section#idioms {
+	padding: 80pt 20pt;
+	box-shadow: 0 -4pt 0 rgba(25, 20, 35, .7);
+}
+section#wtf-is-spaceshit div.section-content, section#idioms div.section-content {
+	margin: 0 auto;
+	max-width: 600pt;
+}
+
+section#syntax-elements {
+	display: flex;
+	flex-direction: row;
+	padding: 80pt 20pt;
+	background-image: radial-gradient(at center bottom, #2c4478, #191423 80%);
+	border-top: 4pt solid #191423;
+}
+section#syntax-elements div.sticky-block {
+	position: sticky;
+	top: 80pt;
+}
+section#syntax-elements div.scrolling-block {
+	flex: 1;
+	margin-left: 20pt;
+}
+section#syntax-elements div.scrolling-block div {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	min-height: 60vh;
+	margin: 80pt 0;
+}
+section#syntax-elements pre {
+	display: block;
+	line-height: 2em;
+	overflow: auto;
+}
+section#syntax-elements pre code[lang="spaceshit"] span.highlight {
+	padding: 5pt 0;
+	background: #ffd900;
+	color: #191423;
+}
+section#idioms h3 {
+	margin-top: 26pt;
+}
+
+h2 {
+	font-size: 1.5em;
+	font-weight: normal;
+}
+
+h3 {
+	font-size: 1.2em;
+	font-weight: normal;
+}
+
+h2, h3, p, ul {
+	margin-bottom: 13pt;
+}
+
+ul {
+	padding-left: 13pt;
+}
+
+code {
+	font-family: "Source Code Pro", "Consolas", monospace;
+}
