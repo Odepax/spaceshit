@@ -1,7 +1,9 @@
-/* Darky blue = #191423 */
-/* Lighty blue = #2c4478 */
-/* Classy blue = #3a3745 */
-/* Yellow = #ffd900 */
+/* White: #ffffff */
+/* Green: #a1ec16 */
+/* Pink: #ee1b5f */
+/* Brown: #a28062 */
+/* Blue: #3a3745 */
+/* Dark: #191423 */
 
 * {
 	margin: 0;
@@ -12,45 +14,51 @@
 }
 
 body {
-	font-size: 13pt;
-	font-family: "Source Sans Pro", "Open Sans", "Arial", sans-serif;
+	background: #3a3745;
 	color: white;
+	font-size: 10pt;
+	font-family: "Source Sans Pro", "Open Sans", "Arial", sans-serif;
 }
 
 header {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	z-index: 1;
-	height: 400pt;
-	background: url("spaceshit-logo.svg"), radial-gradient(at center bottom, #2c4478, #191423 80%);
-	background-repeat: no-repeat, no-repeat;
-	background-position: center, center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 260pt;
+	background-color: #191423;
+	background-image: url("sky.svg");
+	background-position: center center;
 }
 header h1 {
-	margin-top: 260pt;
-	font-size: 1.8em;
+	font-size: 24pt;
 	font-weight: 300;
 	text-align: center;
 }
-header h1 small {
+header h1 img {
+	margin-bottom: 24pt;
+}
+header h1 span, header h1 small {
 	display: block;
-	font-size: .7em;
+}
+header h1 small {
+	font-size: 10pt;
+}
+header h1 b {
+	font-weight: 600;
+	margin: 0 0.5pt;
+	border-bottom: 2pt solid rgba(255, 255, 255, 0.4);
 }
 
 main {
-	position: relative;
-	margin-top: 400pt;
-	background: #3a3745;
-	z-index: 2;
+	margin: 64pt auto;
+	max-width: 720pt;
 }
 
-section#wtf-is-spaceshit, section#idioms {
+section#idioms {
 	padding: 80pt 20pt;
 	box-shadow: 0 -4pt 0 rgba(25, 20, 35, .7);
 }
-section#wtf-is-spaceshit div.section-content, section#idioms div.section-content {
+section#idioms div.section-content {
 	margin: 0 auto;
 	max-width: 600pt;
 }
@@ -92,16 +100,11 @@ section#idioms h3 {
 }
 
 h2 {
-	font-size: 1.5em;
+	font-size: 18pt;
 	font-weight: normal;
 }
 
-h3 {
-	font-size: 1.2em;
-	font-weight: normal;
-}
-
-h2, h3, p, ul {
+h2, p, ul {
 	margin-bottom: 13pt;
 }
 
