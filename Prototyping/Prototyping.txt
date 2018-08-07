@@ -1,0 +1,231 @@
+Name =
+Object Definition Language & Code Generation Ecosystem
+Ob                   g a            n    i      s    m (from oRganism)
+
+Obganism Files:
+*.obo - Obganism Object
+*.obs - Obganism System
+*.obc - Obganism Configuration
+*.obv - Obganism Value
+
+Obganism
+   Main ... Odepax/obganism.git
+      Prototyping/
+         Prototyping.mdj
+         Prototyping.svg
+         Prototyping.txt
+      Website/
+         index.html
+         Publish-PresentationWebsite.ps1
+         pbpw.sh
+   Wiki ... Odepax/obganism.wiki.git
+   Parsers/
+      Java ... Odepax/obganism-parser-java.git
+      DotNet ... Odepax/obganism-parser-dotnet.git
+      Javascript ... Odepax/obganism-parser-js.git
+
+LICENCE :: MIT
+
+TODO: Top -> bottom revamp of the language specs
+
+function parse(code: String): Object[] {
+   Char[] chars = code.chars()
+   Token[] rawTokens = lex(chars)
+   Token[] tokens = refine(rawTokens)
+   TokenCursor cursor = new TokenCursor(tokens)
+   Object[] structures = parse(cursor)
+
+   return structures
+}
+
+function parse(tokens: TokenCursor): Object[] {
+   do {
+      Object structure = parseObject(tokens)
+
+      if (structure != null)
+         structures.add(structure)
+   } while (structure != null)
+}
+
+function parseObject(tokens: TokenCursor): Object {
+   ObjectParser parser = new ObjectParser(tokens)
+
+   return parser.parse()
+}
+
+class TokenCursor(Iterator<Token> base) : Iterator<Token> by base { // pas d'accord avec cette base class (see "next as ext method" below)
+   nextIs<T : Token>() => bool
+   next<T : Token>() => T || ParsingException
+   next() => Token
+   expect<T : Token>() || ParsingException
+   skipWhile<...T : Token>() => skipped: List<Token>
+   skipUntil<...T : Token>() => skipped: List<Token>
+}
+
+(N) next*() as Iterator<Token> extension methods?
+ > Nope, because `if nextIs<T> then t = next()` is impossible to implement without popping 'next' two times!
+   However, `TokenCursor` may extend Iterator<Token>
+(?) parse*() as TokenCursor extension methods?
+
+parser.tokens = ...
+parser.structure = ...
+parser.parse = function () {
+   parseType()
+   parseProperties()
+   parseConstructors()
+   parseOperations()
+   parseEvents()
+   parseModifiers()
+}
+
+web::see projects\_archive\StandaloneDocumentGeneration\ZZZ_gxml\_aygix-web-graphic-chart-revision-1
+
+person {
+   address {
+      street : string -- !empty
+      city : string -- !empty
+      zip : int -- positive
+
+      position : point -- optional { x : float, y : float }
+      ----
+      (street, zip)
+      ----
+      raw distance(other : address) : float
+   } -- ^ tostring
+
+   first name : string -- !empty
+   last name : string -- !empty
+   full name : string -- computed
+
+   email : string -- pattern(/^[a-zA-Z0-9_.-]+@[a-zA-Z0-9_.-]+\.[a-z]{2,4}$/)
+
+   birth date : calendar
+   age : int -- computed
+   is probably dead : boolean -- computed
+
+   friends : collection of person
+   best friend : person -- optional
+   
+   ----
+   
+   !(best friend)
+   !(friends, best friend)
+   !(friends)
+   
+   ----
+   
+   eat(food)
+   is friend with(other : person) : boolean
+
+   combine(
+      outer : enumerable of outer -- this
+      inner : enumerable of inner
+      combiner : function of (outer, inner) : result
+      selector : function of result : tuple of (int, int)
+      final mapper : dictionary of [tuple of (int, int)] => string
+   ) : enumerable of string -- template("outer", "inner", "result")
+} .java -- bean check !tostring
+
+----------------------------------------
+
+ declare WHAT
+document WHY*
+    code HOW
+
+*: Also document the way it integrates within the whole. Encourage discovery.
+
+----------------------------------------
+
+* Well, I guess this part is to be done again...
+
+type {
+   name : string -- !null empty
+   generics : list of type -- !null empty
+}
+
+modifier {
+   negated : boolean -- optional default("false")
+   name : string -- !null !empty
+
+   list of modifier parameter -- !null empty
+}
+
+modifier parameter {} -- enum
+
+modifier int parameter    { value : int                   } -- extends("modifier parameter")
+modifier float parameter  { value : float                 } -- extends("modifier parameter")
+modifier string parameter { value : string -- !null empty } -- extends("modifier parameter")
+modifier regexp parameter { value : regexp -- !null empty } -- extends("modifier parameter")
+
+structure {
+   type -- !null
+
+   list of property    -- !null empty
+   list of constructor -- !null empty
+   list of operation   -- !null empty
+   list of event       -- !null empty
+
+   target : string -- !null empty
+   list of modifier -- !null empty
+}
+
+property {
+   name : string -- !null !empty
+   type -- !null
+
+   list of modifier -- !null empty
+}
+
+constructor {
+   list of parameter -- !null empty
+
+   list of modifier -- !null empty
+}
+
+operation {
+   name : string -- !null !empty
+   list of parameter -- !null empty
+   return type : type -- !null
+   
+   list of modifier -- !null empty
+}
+
+parameter {
+   name : string -- !null !empty
+   type -- !null
+
+   list of modifier -- !null empty
+}
+
+event {
+   name : string -- !null !empty
+   type -- !null
+
+   list of modifier -- !null empty
+}
+
+----------------------------------------
+
+obganism
+   central wiki
+      Docs for all parser implementations
+      DSL syntax specifications = RFC 2119, SemVer
+      major axes concerning the plugin creation = (gh repo) naming conventions
+   prototyping
+   standard DSL compliance tests
+   presentation website
+   parsers = AST interfaces + paring utilities
+      for jvm
+      for dotnet
+      for js
+      ...
+   core plugins = parser integration + generators welcoming capabilities
+      for jetbrain
+      for vs code
+      for sublime text
+      ...
+   extension plugins = final generator
+      java for jetbrain
+      kotlin for jetbrain
+      php for sublime text
+      ...
