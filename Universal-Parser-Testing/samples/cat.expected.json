@@ -1,0 +1,116 @@
+[
+	{
+		"type": {
+			"name": "cat",
+			"generics": []
+		},
+		"properties": [
+			{
+				"name": "name",
+				"type": {
+					"name": "string",
+					"generics": []
+				},
+				"modifiers": [
+					{
+						"name": "in",
+						"parameters": [
+							{
+								"type": "integer",
+								"value": 2
+							},
+							{
+								"type": "integer",
+								"value": 20
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "purr strength",
+				"type": {
+					"name": "float",
+					"generics": []
+				},
+				"modifiers": [
+					{
+						"name": "in",
+						"parameters": [
+							{
+								"type": "real",
+								"value": 0.0
+							},
+							{
+								"type": "real",
+								"value": 1.0
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "is cute",
+				"type": {
+					"name": "bool",
+					"generics": []
+				},
+				"modifiers": [
+					{
+						"name": "default",
+						"parameters": [
+							{
+								"type": "name",
+								"value": "true"
+							}
+						]
+					}
+				]
+			},
+			{
+				"name": "is grumpy",
+				"type": {
+					"name": "bool",
+					"generics": []
+				},
+				"modifiers": [
+					{
+						"name": "default",
+						"parameters": [
+							{
+								"type": "name",
+								"value": "false"
+							}
+						]
+					}
+				]
+			}
+		],
+		"operations": [
+			{
+				"name": "meow",
+				"parameters": [],
+				"type": {
+					"name": "",
+					"generics": []
+				},
+				"modifiers":  []
+			}
+		],
+		"events": [],
+		"modifiers": [
+			{
+				"name": "plural",
+				"parameters": [
+					{
+						"type": "type",
+						"value": {
+							"name": "cats",
+							"generics": []
+						}
+					}
+				]
+			}
+		]
+	}
+]
