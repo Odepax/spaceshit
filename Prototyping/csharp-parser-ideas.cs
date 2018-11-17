@@ -11,8 +11,11 @@
 /// Odepax.Extensions.Obganism.Analyzing
 /// Odepax.Extensions.Obganism.Parsing
 /// Odepax.Extensions.Obganism.CodeGeneration
+///
+/// ONE Solution
+/// ONE Namespace
 namspace Odepax.Obganism {
-	[Flags] enum TokenType : byte {
+	[Flags] enum TokenType : byte { // Is FlagsAttribute mandatory here?
 		None                   = 0b_0000_0000,
 		BlockStart             = 0b_0000_0001,
 		BlockEnd               = 0b_0000_0010,
@@ -25,19 +28,61 @@ namspace Odepax.Obganism {
 		String                 = 0b_0000_1001, // No "Regexp" or "Pattern" token => use string instead.
 		Word                   = 0b_0001_0000,
 			OfKeyword          = 0b_0001_0001,
-		Number                 = 0b_0010_0000,
-			Int                = 0b_0110_0000,
-				PositiveInt	   = 0b_0110_0001,
-			Float              = 0b_1010_0000
+				PositiveInt	   = 0b_1011_0001,
+			Int                = 0b_1010_0000,
+			Float              = 0b_0110_0000,
+		Number                 = 0b_0010_0000
 	}
 
 	struct Token {
-		readonly TokenType Type;
+		readonly TokenType Type; // TokenType or Token hierarchy?
 		readonly string? Value;
 
 		readonly ulong Line;
 		readonly ulong Column;
 		readonly ulong Position;
+	}
+
+	Token GetToken(TokenReader input);
+	Token ReadToken(TokenReader input);
+	void SkipToken(TokenReader input);
+	ulong SkipToken<T>(TokenReader input) where T : Token;
+	bool TestToken<T>(TokenReader input) where T : Token;
+	void AssertToken<T>(TokenReader input) where T : Token;
+
+	string ReadName(TokenReader input);
+	Type ReadType(TokenReader input);
+	IReadOnlyList<Modifier> ReadModifiers(TokenReader input);
+
+	// Note: no name inference in this example...
+	// [OK] name : type
+	// [OK] name : type -- modifiers
+	// [OK] name \n : \n type
+	// [OK] name \n : \n type \n -- \n modifiers
+	Property ReadProperty(TokenReader input) {
+		string propertyName = ReadName(input);
+
+		SkipToken<LineBreak>(input);
+
+		AssertToken<TypeIntroducer>(input);
+		SkipToken(input);
+
+		SkipToken<LineBreak>(input);
+
+		Type propertyType = ReadType(input);
+
+		SkipToken<LineBreak>(input);
+
+		IReadOnlyList<Modifier> propertyModifiers = ReadModifiers(input);
+		/*
+		if (TestToken<ModifierIntroducer>(input)) {
+			SkipToken(input);
+
+			...
+		}
+		*/
+
+		return new Property(propertyName, propertyType, propertyModifiers)
 	}
 
 	//

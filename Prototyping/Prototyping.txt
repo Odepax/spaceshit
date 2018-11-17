@@ -24,17 +24,7 @@ Obganism
       DotNet ... Odepax/obganism-parser-dotnet.git
       Javascript ... Odepax/obganism-parser-js.git
 
-class TokenCursor(...)
-   nextIs<T : Token>() => bool
-   next<T : Token>() => T || ParsingException
-   next() => Token
-   expect<T : Token>() || ParsingException
-   skipWhile<...T : Token>() => skipped: List<Token>
-   skipUntil<...T : Token>() => skipped: List<Token>
-}
-
-web::see projects\_archive\StandaloneDocumentGeneration\ZZZ_gxml\_aygix-web-graphic-chart-revision-1
-
+vvv OLD vvv
 person {
    address {
       street : string -- !empty
