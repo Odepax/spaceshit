@@ -1,113 +1,167 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-		<meta charset="UTF-8" />
-		<title>Obganism - Object Definition Language & Code Generation Ecosystem</title>
-		<link rel="stylesheet" href="style.css" />
+		<meta charset="utf-8" />
+		<title>Obganism &mdash; Object Definition Language &amp; Code Generation Ecosystem</title>
+		<meta name="author" content="Odepax" />
+		<meta name="description" content="Obganism" />
+		<meta name="keywords" content="obganism, odepax" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="theme-color" content="#a28062" />
+		<link rel="stylesheet" type="text/css" href="./style.css" />
 		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
+		<meta name="robots" content="index, follow" />
+		<script type="text/javascript">
+			window.addEventListener("load", () => {
+				const currentTime = new Date().getHours()
+
+				if (currentTime < 7 || 17 <= currentTime) {
+					document.body.classList.add('dark')
+				}
+			})
+		</script>
 	</head>
 	<body>
-		<header>
+		<header role="banner">
+			<nav>
+				<ul>
+					<li><a href="">GitHub</a></li>
+					<li><a href="">Language Specs</a></li>
+					<li><a href="">C# Parser</a></li>
+					<li><a href="">Js Parser</a></li>
+					<li><a href="">Ecosystem</a></li>
+				</ul>
+			</nav>
 			<h1>
-				<img src="logo.svg" />
-				<span>O<i>b</i>ganism</span>
-				<small><b>Ob</b>ject Definition Lan<b>g</b>u<b>a</b>ge & Code Ge<b>n</b>erat<b>i</b>on Eco<b>s</b>yste<b>m</b></small>
+				<img src="./logo.svg" style="width: 64pt; height: 64pt;" alt="Obganism's logo" />
+				<span>Obganism</span>
+				<small>Object Definition Language &amp; Code Generation Ecosystem</small>
 			</h1>
+			<section>
+				<button title="Switch between light and dark themes" aria-label="Switch between light and dark themes" onclick="document.body.classList.toggle('dark')">&#127763;</button>
+			</section>
 		</header>
-		<main>
-			<section id="wtf-is-spaceshit">
-				<div class="section-content">
-					<h2>WTF is Spaceshit?</h2>
-					<p>
-						Recently, I have had to generate a lot of <a href="https://en.wikipedia.org/wiki/JavaBeans">Java beans</a>, applying <a href="https://en.wikipedia.org/wiki/Java_Persistence_API">JPA</a> annotations on most of them. It is fair to say that this is a quite long and repetitive work to do, even using IDEs' getters &amp; setters and method generation tools...
-					</p>
-					<p>
-						Thus, I thought it would be great to be able to generate class skeletons from a language-agnostic description of the data structure they represent. A single-use piece of code would be parsed and a complete class would be generated from it.
-					</p>
-				</div>
-			</section>
-			<section id="syntax-elements">
-				<div class="sticky-block-container">
-					<div class="sticky-block">
-						<h2>Syntax elements</h2>
-						<pre><code lang="spaceshit"><span class="spaceshit-name">person</span> {
-                <span class="spaceshit-type">id</span>     -- <span class="spaceshit-modifiers">positive</span>
-                <span class="spaceshit-type">name</span>   -- <span class="spaceshit-modifiers">!empty</span>
-  <span class="spaceshit-name">birth date</span>  : <span class="spaceshit-type">calendar</span>
-  <span class="spaceshit-name">age</span>         : <span class="spaceshit-type">int</span>    -- <span class="spaceshit-modifiers">computed</span>
-  <span class="spaceshit-name">best friend</span> : <span class="spaceshit-type">person</span> -- <span class="spaceshit-modifiers">optional</span>
-  <span class="spaceshit-name">friends</span>     : <span class="spaceshit-type">list of person</span>
-} .<span class="spaceshit-target-lang">java</span> -- <span class="spaceshit-modifiers">bean !check !tostring</span></code></pre>
-					</div>
-				</div>
-				<div class="scrolling-block">
-					<div data-highlight="spaceshit-type">
-						<h3>Types</h3>
-						<p>
-							The Spaceshit syntax supports generic types: use <code>... of ...</code> to stack a generic. Multiple generics (e.g.: <code>Map&lt;K, V&gt;</code>) are not supported.
-						</p>
-						<p>
-							Like names, words in multi-words types are separated with spaces in order to be completely language-agnostic.
-						</p>
-					</div>
-					<div data-highlight="spaceshit-name">
-						<h3>Names</h3>
-						<p>
-							Names are optional. If not explicitly specified, the name of a property will be inferred from the type. Generic types, such as <code>list of pet</code>, will be reversed to form the generated name of the property (e.g.: <code>pet list</code>).
-						</p>
-						<p>
-							In addition, Spaceshit defines some special types that will be converted to another type when used without a property name:
-						</p>
-						<ul>
-							<li><code>x</code>, <code>y</code> and <code>z</code> are mapped to <code>float</code>;</li>
-							<li><code>id</code> is mapped to <code>int</code>;</li>
-							<li><code>name</code> and <code>title</code> are mapped to <code>string</code>.</li>
-						</ul>
-						<p>
-							Like types, words in multi-words names are separated with spaces in order to be completely language-agnostic.
-						</p>
-					</div>
-					<div data-highlight="spaceshit-modifiers">
-						<h3>Modifiers</h3>
-						<p>
-							Modifiers are space-separated flags that give extra information about a property or a whole structure. A modifier is either unspecified, present, or negated when prefixed with an exclamation mark.
-						</p>
-						<p>
-							As they are parsed, but not handled by the parser, modifiers may have different effects depending on the code generator used to generate actual code from a Spaceshit definition.
-						</p>
-					</div>
-					<div data-highlight="spaceshit-target-lang">
-						<h3>Target language</h3>
-						<p>
-							This gives the actual programming language to target when generating code.
-						</p>
-					</div>
-				</div>
-			</section>
-			<section id="idioms">
-				<div class="section-content">
-					<h2>Idioms</h2>
-					<p>
-						Here are some standards that should be respected when building a parser or a code generator in order to maintain a certain cohesion of the Spaceshit language.
-					</p>
-					<h3>The Spaceshit code is not meant to be saved</h3>
-					<p>
-						A Spaceshit structure definition is supposed to be a single-use code snippet, it should not be saved in a file and serve to generate code on a build-basis for instance.
-					</p>
-					<p>
-						Plus, if the technology changes, I want to be able to break retro-compatibility in order to change with it, and not be stuck nor forgotten...
-					</p>
-					<h3>The generated code is not meant to be final nor compilable</h3>
-					<p>
-						Keep in mind that the generated codes are class skeletons. As such, they may not be usable out of the box, and even require some tweaking before being compiled in some cases.
-					</p>
-					<h3>The generated code may not be well formated</h3>
-					<p>
-						... which should not be a problem as everyone reformat their code using the IDE, right?
-					</p>
-				</div>
-			</section>
+		<main class="text-flow">
+			<h1>One<br />One</h1>
+			<p>
+				Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+				quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+				cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+				proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			</p>
+			<h2>Two<br />Two</h2>
+			<p>
+				Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+				quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+				cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+				proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			</p>
+			<h3>Three<br />Three</h3>
+			<p>
+				Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+				quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+				cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+				proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			</p>
+			<hr />
+			<h1>Paragraphs</h1>
+			<p>
+				Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+				quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+				cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+				proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			</p>
+			<p>
+				Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+				quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+				cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+				proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			</p>
+			<hr />
+			<h1>Quotations</h1>
+			<p>
+				Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+				quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+				cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+				proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			</p>
+			<blockquote cite="">
+				<p>
+					Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+					tempor incididunt ut labore et dolore magna aliqua.
+				</p>
+				<footer>
+					Author, <cite>Book</cite>
+				</footer>
+			</blockquote>
+			<p>
+				Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+				quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+				cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+				proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			</p>
+			</p>
+			<hr />
+			<h1>Code</h1>
+			<p>
+				Lorem <code>cat { name : string }</code> ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+				quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+				cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+				proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			</p>
+			<pre><code>cat {
+	name : string -- in(1, 30)
+	purr power : float -- in(0.0, 1.0)
+	is grumpy : bool -- default(false)
+
+	pet : operation of cat -- (
+		target(existing)
+		input(: pet cat operation input)
+		output(: pet cat operation output)
+	)
+}
+
+pet cat operation input {
+	duration : float -- ( above(0.0), unit("seconds") )
+}
+
+pet cat operation output {
+	is grumpy : bool
+}</code></pre>
+			<p>
+				Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
+				tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
+				quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+				consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+				cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
+				proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+			</p>
 		</main>
-		<script src="app.js"></script>
+		<footer role="contentinfo">
+			<p>
+				Originally published the <time datetime="2019-07-29">7<sup>th</sup> of July, 2019</time>.<br />
+				Last updated the <time datetime="2019-07-29">7<sup>th</sup> of July, 2019</time>.
+			</p>
+			<p>
+				&copy; Copyright 2019 <a href="https://github.com/Odepax">Odepax</a>.<br />
+				See also: <a href="https://github.com/Odepax/obganism/blob/master/LICENSE.md">Artworks and text contents' license</a>.
+			</p>
+		</footer>
 	</body>
 </html>
