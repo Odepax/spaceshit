@@ -1,3 +1,3 @@
-# Spaceshit
+# Obganism Lang
 
-This is the [Spaceshit's presentation website](https://odepax.github.io/spaceshit/)'s repository.
+A repository for the [Obganism's website](https://odepax.github.io/obganism-lang/) and [language specs](https://github.com/Odepax/obganism-lang/wiki).
