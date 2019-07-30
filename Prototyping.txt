@@ -1,0 +1,18 @@
+Name =
+Object Definition Language & Code Generation Ecosystem
+Ob                   g a            n    i      s    m (from oRganism)
+
+Obganism Files:
+*.obo - Obganism Object
+*.obs - Obganism System
+*.obc - Obganism Configuration
+*.obv - Obganism Value
+
+How it works =
+Obganism code > Parser > Data structure > Generator > Actual code
+
+ declare WHAT
+document WHY*
+    code HOW
+
+*: Also document the way it integrates within the whole. Encourage discovery.

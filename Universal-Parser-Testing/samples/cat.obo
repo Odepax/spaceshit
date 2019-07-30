@@ -1,8 +1,0 @@
-cat {
-	name : string -- in(2, 20)
-	purr strength : float -- in(0.0, 1.0)
-	is cute : bool -- default(true)
-	is grumpy : bool -- default(false)
-	----
-	meow
-} -- plural(:cats)
