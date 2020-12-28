@@ -16,3 +16,35 @@ document WHY*
     code HOW
 
 *: Also document the way it integrates within the whole. Encourage discovery.
+
+More wannabe error messages:
+
+flight {
+	code : string -- pattern("^[A-Z][A-Z][0-9][0-9][0-9]$", ignore case)
+	available seat count : int -- at least(1)
+
+	depature : airport
+	arrival : airport --
+}--x("
+
+(9*O*)9
+(9*o*)9
+t(°v°t)
+t('_'u)
+c(T-Tc)
+c(°-°c)
+/(-o-)\
+/(-.-)\
+The provided input seems invalid as per Obganism 1.1.
+Learn more about the language syntax on https://github.com/Odepax/obganism-lang/wiki/Obganism-1.1
+
+The error occurred at character 165, line 7, column 1:
+
+« Encounted a `--` modifier introducer, but it wasn't followed by either:
+
+<>
+A single modifier, e.g. `... -- some single modifier name`.
+
+<>
+A list of modifiers, e.g. `... -- ( and a one, and a two, and a three )`.
+Note: a list of modifiers cannot be empty. »

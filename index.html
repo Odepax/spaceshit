@@ -42,6 +42,388 @@
 			</section>
 		</header>
 		<main class="text-flow">
+			<h1 style="text-align: center;">Playground!</h1>
+			<p style="text-align: center;">
+				Type <a href="https://github.com/Odepax/obganism-lang/wiki/Obganism-1.0#examples-3">Obganism code</a> on the left,
+				get C# classes on the right.
+			</p>
+			<div role="grid" style="background: var(--BACKDARK);">
+				<div role="row" style="padding: 10pt 5pt;">
+						<textarea id="obo" role="cell" style="display: block; margin: 0 5pt; padding: 10pt; background: var(--BACKLIGHT); resize: none; min-height: 100%; transition: unset; border: none; font-family: monospace;">
+cat {
+    id : int
+    name : string
+    purr power : float
+}
+						</textarea>
+						<textarea id="cs" rows="20" role="cell" style="display: block; margin: 0 5pt; padding: 10pt; background: var(--BACKLIGHT); transition: unset; border: none; font-family: monospace;"></textarea>
+						<script>
+
+							class ParsingContext {
+								constructor(/** @type {string} */ source) {
+									this.source = source
+									this.position = 0
+								}
+							}
+
+							/** @return {boolean|null} */
+							function test(/** @type {ParsingContext} */ context, /** @type {number|string|RegExp} */ match = 1) {
+								if (context.source.length <= context.position)
+									return null
+
+								if (typeof match == "number")
+									return match <= context.source.length - context.position || null
+
+								if (typeof match == "string")
+									return match.length <= context.source.length - context.position
+										? context.source.substring(context.position, context.position + match.length) == match
+										: null
+
+								if (typeof match == "object")
+									return match.test(context.source.substring(context.position))
+							}
+
+							function skip(/** @type {ParsingContext} */ context, /** @type {number|string|RegExp} */ match = 1) {
+								if (typeof match == "number")
+									context.position = Math.min(context.source.length, context.position + match)
+
+								else if (typeof match == "string") {
+									if (context.source.substring(context.position, context.position + match.length) == match)
+										context.position = Math.min(context.source.length, context.position + match.length)
+								}
+
+								else if (typeof match == "object") {
+									const result = context.source.substring(context.position).match(match)
+									if (result)
+										context.position = Math.min(context.source.length, context.position + result[0].length)
+								}
+							}
+
+							/** @return {string} */
+							function get(/** @type {ParsingContext} */ context, /** @type {number|string|RegExp} */ match = 1) {
+								if (typeof match == "number")
+									return context.source.substring(context.position, context.position + match)
+
+								else if (typeof match == "string") {
+									const result = context.source.substring(context.position, context.position + match.length)
+									return result == match
+										? result
+										: ""
+								}
+
+								else if (typeof match == "object") {
+									const result = context.source.substring(context.position).match(match)
+									return result
+										? result[0]
+										: ""
+								}
+							}
+
+							/** Read = Get + Skip @return {string} */
+							function read(/** @type {ParsingContext} */ context, /** @type {number|string|RegExp} */ match = 1) {
+								const result = get(context, match)
+
+								skip(context, result.length)
+
+								return result
+							}
+
+							/** Assert = Test || throw */
+							function assert(/** @type {ParsingContext} */ context, /** @type {number|string|RegExp} */ match = 1) {
+								if (!test(context, match)) {
+									throw new Error("Expected something like << " + match.toString() + " >> in << " + context.source + " >>, @" + context.position)
+								}
+							}
+
+							/** Confirm = Assert + Skip */
+							function confirm(/** @type {ParsingContext} */ context, /** @type {number|string|RegExp} */ match = 1) {
+								assert(context, match)
+								skip(context, match)
+							}
+
+						</script>
+
+						<script>
+
+							class Obgan {
+								constructor(type, ...properties) {
+									this.type = type
+									this.properties = properties
+								}
+							}
+
+							class Type {
+								constructor(name, ...generics) {
+									this.name = name
+									this.generics = generics
+								}
+							}
+
+							class Property {
+								constructor(name, type) {
+									this.name = name
+									this.type = type
+								}
+							}
+
+						</script>
+
+						<script>
+
+							// Step = Skip + Get
+							// Measure = Get.length
+
+							const formatting = /^[ \t\n\r]*/
+							const _break = /^[ \t\n\r]*[,\n\r][ \t\n\r]*/
+
+							/** @return {RegExp} */
+							function formattingThen(/** @type {string} */ match) {
+								return new RegExp(formatting.source + match.replace(/[\(\)\[\]\{\}\^\$\.\|\?\+\*]/g, "\\$&"))
+							}
+
+							/** @template T @return {T[]} */
+							function readSet(
+								/** @type {ParsingContext} */ context,
+								/** @type {string} */ setStart,
+								/** @type {(ParsingContext) => T} */ readItem,
+								/** @type {string} */ setTerminator
+							) {
+								const items = []
+								const formattingThenSetTerminator = formattingThen(setTerminator)
+
+								confirm(context, setStart)
+
+								if (!test(context, formattingThenSetTerminator)) {
+									skip(context, formatting)
+
+									items.push(readItem(context))
+								}
+
+								while (!test(context, formattingThenSetTerminator)) {
+									confirm(context, _break)
+
+									items.push(readItem(context))
+								}
+
+								skip(context, formattingThenSetTerminator)
+
+								return items
+							}
+
+							function readName(/** @type {ParsingContext} */ context) {
+								return read(context, /^[a-z]+([ \t]+[a-z]+)*/i)
+									.replace(/[ \t]+/g, " ")
+							}
+
+							function readTypeName(/** @type {ParsingContext} */ context) {
+								const words = []
+
+								assert(context, /^[a-z]|\\of\b/i)
+								assert(context, /^(?!of\b)/)
+
+								if (test(context, /^\\of\b/)) {
+									skip(context, /^\\of/)
+									words.push("of")
+								} else {
+									words.push(read(context, /^[a-z]+/i))
+								}
+
+								while (true) {
+									if (test(context, formattingThen("of\\b"))) {
+										// Encountering the of keyword => stop processing name here.
+										return words.join(" ")
+									}
+
+									else if (test(context, /^[ \t]+[a-z]/i)) {
+										// Encountering a new word after some spaces => get him!
+										skip(context, /^[ \t]+/)
+										words.push(read(context, /^[a-z]+/i))
+									}
+
+									else if (test(context, /^[ \t]+\\of\b/)) {
+										// Encountering an escaped of keyword => include in the name as standard word.
+										skip(context, /^[ \t]+\\of/)
+										words.push("of")
+									}
+
+									else {
+										// Encountering something else => stop processing name here.
+										return words.join(" ")
+									}
+								}
+							}
+
+							function readGenerics(/** @type {ParsingContext} */ context) {
+								if (test(context, formattingThen("of\\b"))) {
+									skip(context, formattingThen("of\\b"))
+									skip(context, formatting)
+
+									if (test(context, "(")) {
+										return readSet(context, "(", readType, ")")
+									} else {
+										return [ readType(context) ]
+									}
+								} else {
+									return []
+								}
+							}
+
+							function readType(/** @type {ParsingContext} */ context) {
+								const name = readTypeName(context)
+								const generics = readGenerics(context)
+
+								return new Type(name, ...generics)
+							}
+
+							function readProperty(/** @type {ParsingContext} */ context) {
+								const name = readName(context)
+
+								skip(context, formatting)
+								confirm(context, ":")
+								skip(context, formatting)
+
+								const type = readType(context)
+
+								return new Property(name, type)
+							}
+
+							function readProperties(/** @type {ParsingContext} */ context) {
+								if (test(context, formattingThen("{"))) {
+									skip(context, formatting)
+									return readSet(context, "{", readProperty, "}")
+								} else {
+									return []
+								}
+							}
+
+							function readObgan(/** @type {ParsingContext} */ context) {
+								const type = readType(context)
+								const properties = readProperties(context)
+
+								return new Obgan(type, ...properties)
+							}
+
+							function readObganism(/** @type {ParsingContext} */ context) {
+								context.source = "\0" + context.source + "\0"
+
+								return readSet(context, "\0", readObgan, "\0")
+							}
+
+						</script>
+						<script type="text/javascript">
+							/** @see https://www.grafikart.fr/tutoriels/debounce-throttle-642 */
+							function throttle(callback, delay) {
+								var last;
+								var timer;
+								return function () {
+									var context = this;
+									var now = +new Date();
+									var args = arguments;
+									if (last && now < last + delay) {
+										// le délai n'est pas écoulé on reset le timer
+										clearTimeout(timer);
+										timer = setTimeout(function () {
+											last = now;
+											callback.apply(context, args);
+										}, delay);
+									} else {
+										last = now;
+										callback.apply(context, args);
+									}
+								};
+							}
+
+							function pascalCase(name) {
+								return name[0].toUpperCase() + name.substring(1).replace(/ ([a-z])/g, (_, x) => x.toUpperCase())
+							}
+
+							function camelCase(name) {
+								return name[0].toLowerCase() + name.substring(1).replace(/ ([a-z])/g, (_, x) => x.toUpperCase())
+							}
+
+							function type2cs({ name, generics }) {
+								return generics.length == 0 && [ "bool", "sbyte", "byte", "short", "ushort", "int", "uint", "long", "ulong", "char", "float", "double", "decimal", "string", "object" ].includes(name)
+									? name
+									: (
+										/*name == "list"
+											? "IReadOnlyList"
+											:*/ pascalCase(name)
+									) + (
+										0 < generics.length
+											? "<" + generics.map(type2cs).join(", ") + ">"
+											: ""
+									)
+							}
+
+							function property2cs({ name, type }) {
+								return "    private " + type2cs(type) + " " + pascalCase(name) + "Value;" + "\n"
+								     + "    public " + type2cs(type) + " " + pascalCase(name) + "" + "\n"
+								     + "    {" + "\n"
+								     + "    	get => " + pascalCase(name) + "Value;" + "\n"
+								     + "    	set => this.ChangeProperty(PropertyChanged, ref " + pascalCase(name) + "Value, value);" + "\n"
+								     + "    }"
+							}
+
+							function param2cs({ name, type }) {
+								return (
+									type.name == "list"
+										? "IEnumerable<" + type.generics.map(type2cs).join(", ") + ">?"
+										: type2cs(type)
+								) + " " + camelCase(name) + (
+									type.name == "list"
+										? " = null"
+										: ""
+								)
+							}
+
+							function assign2cs({ name, type }) {
+								return "        " + pascalCase(name) + "Value = " + (
+									type.name == "list"
+										? "new List<" + type.generics.map(type2cs).join(", ") + ">(" + camelCase(name) + " ?? new " + type2cs(type.generics[0]) + "[0])"
+										: camelCase(name)
+									) + ";"
+							}
+
+							function csconstructor(type, properties) {
+								return "    public " + pascalCase(type) + "(" + properties.map(param2cs).join(", ") + ")" + "\n"
+								     + "    {" + "\n"
+								     + properties.map(assign2cs).join("\n") + "\n"
+								     + "    }" + "\n"
+							}
+
+							function obgan2cs({ type, properties }) {
+								return "public sealed class " + type2cs(type) + " : INotifyPropertyChanged" + "\n"
+								     + "{" + "\n"
+								     + "    public event PropertyChangedEventHandler PropertyChanged;" + "\n"
+								     + "" + "\n"
+								     + properties.map(property2cs).join("\n\n") + "\n"
+								     // + "" + "\n"
+								     // + csconstructor(type.name, properties)
+								     + "}" + "\n"
+							}
+
+							function obo2cs (source) {
+								return "public static class ChangePropertyNotifyProperyyChangedExtensions" + "\n"
+								     + "{" + "\n"
+								     + "    public static void ChangeProperty<T>(this INotifyPropertyChanged @this, PropertyChangedEventHandler propertyChanged, ref T field, T value, [CallerMemberName] string propertyName = null)" + "\n"
+								     + "    {" + "\n"
+								     + "        if (!Equals(value, field))" + "\n"
+								     + "        {" + "\n"
+								     + "            field = value;" + "\n"
+								     + "            propertyChanged?.Invoke(@this, new PropertyChangedEventArgs(propertyName));" + "\n"
+								     + "        }" + "\n"
+								     + "    }" + "\n"
+								     + "}" + "\n"
+								     + "" + "\n"
+								     + readObganism(new ParsingContext(source)).map(obgan2cs).join("\n")
+							}
+
+							obo.addEventListener("keyup", throttle(() => cs.value = obo2cs(obo.value), 500), false)
+							cs.value = obo2cs(obo.value)
+						</script>
+				</div>
+			</div>
+			<hr />
 			<h1>One<br />One</h1>
 			<p>
 				Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
